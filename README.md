@@ -7,7 +7,7 @@ sudo docker run -p 8086:8086 -v $PWD:/var/lib/influxdb influxdb
 # setup grafana
 sudo docker run -d -p 3000:3000 grafana/grafana
 
-# When logged in to Grafana, you have to "add data source" and add InfluxDB as data source. In "HTTP", the IP address is this server, port number is 8086, "Access" should be "Browser". Leave "Auth" empty. For "InfluxDB Details", Database is "senselet", "User" and "password" are both root. Then save and test.
+# When logged in to Grafana, you have to add InfluxDB as "data source". In "HTTP", the IP address is this server, port number is 8086, "Access" should be "Browser". Leave "Auth" empty. For "InfluxDB Details", Database is "senselet", "User" and "password" are both root. Then save and test.
 
 # install message broker and its python library
 sudo apt-get install mosquitto \
