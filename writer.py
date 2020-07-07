@@ -20,12 +20,8 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe("senselet/#")
 
 # The callback for when a PUBLISH message is received from the server.
-def on_message(client, userdata, msg):
-    topic = msg.topic
 
-
-    message = (msg.payload).decode('ascii')
-    print(topic+" "+message)
+def process_ht(topic, message):
     tt =   float(message.split('_')[0])
     temp = float(message.split('_')[1])
     humi = float(message.split('_')[2])
@@ -34,10 +30,77 @@ def on_message(client, userdata, msg):
     point['measurement'] = 'temp_humi_measurement'
     point['time']   = datetime.fromtimestamp(tt, pytz.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
     point['fields'] = {'temperature': temp, 'humidity': humi}
-    point['tags']   = {'sensor': int(topic.split('/')[1])}
+    point['tags']   = {'sensor': int(topic.split('/')[1].split('_')[0])}
     points.append(point)
     if len(points) > 0:
         influx.write_points(points)
+
+
+def process_ds(topic, message):
+    tt =   float(message.split('_')[0])
+    isOpen = float(message.split('_')[1])
+    points = []
+    point  = {}
+    point['measurement'] = 'door status measurement'
+    point['time']   = datetime.fromtimestamp(tt, pytz.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+    point['fields'] = {'doorStatus': isOpen}
+    # multi tag?
+    point['tags']   = {'sensor': int(topic.split('/')[1].split('_')[0])}
+    points.append(point)
+    if len(points) > 0:
+        influx.write_points(points)
+
+
+def process_ps(topic, message):
+    tt =   float(message.split('_')[0])
+    isOpen = float(message.split('_')[1])
+    points = []
+    point  = {}
+    point['measurement'] = 'door status measurement'
+    point['time']   = datetime.fromtimestamp(tt, pytz.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+    point['fields'] = {'doorStatus': isOpen}
+    # multi tag?
+    point['tags']   = {'sensor': int(topic.split('/')[1].split('_')[0])}
+    points.append(point)
+    if len(points) > 0:
+        influx.write_points(points)
+
+
+
+def process_wl(topic, message):
+    tt =   float(message.split('_')[0])
+    isOpen = float(message.split('_')[1])
+    points = []
+    point  = {}
+    point['measurement'] = 'door status measurement'
+    point['time']   = datetime.fromtimestamp(tt, pytz.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+    point['fields'] = {'doorStatus': isOpen}
+    # multi tag?
+    point['tags']   = {'sensor': int(topic.split('/')[1].split('_')[0])}
+    points.append(point)
+    if len(points) > 0:
+        influx.write_points(points)
+
+
+switcher = {
+    0: process_ht,        
+    1: process_ds,
+    2: process_ps,
+    3: process_wl
+}
+
+def on_message(client, userdata, msg):
+    topic = msg.topic
+    message = (msg.payload).decode('ascii')
+    print(topic+" "+message)
+
+    sensor_type = int(topic.split('_')[1])
+    # process and write data to indluxdb
+    # TODO: get switcher working
+    # TODO: understand measurement tags
+    # process_ds(topic, message)
+    switcher.get(sensor_type, "Invalid Sensor Type")(topic, message)
+
 
 
 def main():
