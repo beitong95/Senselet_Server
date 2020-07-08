@@ -41,7 +41,7 @@ def process_ds(topic, message):
     isOpen = float(message.split('_')[1])
     points = []
     point  = {}
-    point['measurement'] = 'door status measurement'
+    point['measurement'] = 'door_status_measurement'
     point['time']   = datetime.fromtimestamp(tt, pytz.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
     point['fields'] = {'doorStatus': isOpen}
     # multi tag?
@@ -53,12 +53,12 @@ def process_ds(topic, message):
 
 def process_ps(topic, message):
     tt =   float(message.split('_')[0])
-    isOpen = float(message.split('_')[1])
+    isMovement = float(message.split('_')[1])
     points = []
     point  = {}
-    point['measurement'] = 'door status measurement'
+    point['measurement'] = 'movement_measurement'
     point['time']   = datetime.fromtimestamp(tt, pytz.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
-    point['fields'] = {'doorStatus': isOpen}
+    point['fields'] = {'movementStatus': isMovement}
     # multi tag?
     point['tags']   = {'sensor': int(topic.split('/')[1].split('_')[0])}
     points.append(point)
