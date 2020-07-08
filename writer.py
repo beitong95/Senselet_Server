@@ -69,12 +69,12 @@ def process_ps(topic, message):
 
 def process_wl(topic, message):
     tt =   float(message.split('_')[0])
-    isOpen = float(message.split('_')[1])
+    isLeak= float(message.split('_')[1])
     points = []
     point  = {}
-    point['measurement'] = 'door status measurement'
+    point['measurement'] = 'water_leakage_measurement'
     point['time']   = datetime.fromtimestamp(tt, pytz.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
-    point['fields'] = {'doorStatus': isOpen}
+    point['fields'] = {'leakstatus': isLeak}
     # multi tag?
     point['tags']   = {'sensor': int(topic.split('/')[1].split('_')[0])}
     points.append(point)
