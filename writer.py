@@ -81,12 +81,25 @@ def process_wl(topic, message):
     if len(points) > 0:
         influx.write_points(points)
 
+def process_di(topic, message):
+    tt =   float(message.split('_')[0])
+    distance = float(message.split('_')[1])
+    points = []
+    point  = {}
+    point['measurement'] = 'distance_measurement'
+    point['time']   = datetime.fromtimestamp(tt, pytz.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+    point['fields'] = {'distance': distance}
+    point['tags']   = {'sensor': int(topic.split('/')[1].split('_')[0])}
+    points.append(point)
+    if len(points) > 0:
+        influx.write_points(points)
 
 switcher = {
     0: process_ht,        
     1: process_ds,
     2: process_ps,
-    3: process_wl
+    3: process_wl,
+    4: process_di
 }
 
 def on_message(client, userdata, msg):
